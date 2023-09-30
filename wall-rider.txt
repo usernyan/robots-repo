@@ -1,0 +1,36 @@
+#Set our t_throttle to max
+#set reg[4] 100
+00000 0 100 010 0 0 0 0 0000000001100100
+
+#str [ (1 << 15) + 2 ], reg[4]
+00010 0 010 100 0 0 0 0 1000000000000000
+
+#loop start
+#store the current PC into reg[3]
+00000 1 011 000 0 0 0 0
+
+#just read the t_throttle to test this loop
+#00001 0 010 010 0 0 0 0 1000000000000000
+
+#NOPs
+01001 1 010 010 0 0 0 0
+
+#lod our actual throttle in reg[5]
+00001 0 101 010 0 0 0 0 1000000000000001
+
+#if our actual throttle is lower than n, we must've hit something.
+10100 0 101 010 0 0 0 0 0000000000000100
+#jmp forward 6 instructions if it's not lower than n
+10101 0 000 000 0 1 0 1 0000000000000110
+#lod current t_ang into reg[6]
+00001 0 110 010 0 0 0 0 1000000000000010
+#add number to reg[6]
+01001 0 110 010 0 0 0 0 0000000000100000
+#str reg[6] into t_ang
+00010 0 010 110 0 0 0 0 1000000000000010
+
+#end if
+01001 1 010 010 0 0 0 0
+
+#end loop
+10101 1 011 000 0 0 0 0
